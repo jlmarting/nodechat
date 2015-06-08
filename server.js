@@ -13,12 +13,12 @@ https://stormpath.com/blog/everything-you-ever-wanted-to-know-about-node-dot-js-
 
 */
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var eventos = require('events');
-var socket = require('socket.io');
-var mongoose= require('mongoose');
-var session = require('client-sessions');
+var express = require('express');			// framework para node
+var bodyParser = require('body-parser');	// módulo para lectura de post
+var eventos = require('events');			// eventos
+var socket = require('socket.io');			// comunicación por sockets
+var mongoose= require('mongoose');			// modelo de objetos para mongodb
+var session = require('client-sessions');	// gestión de sesiones 
 
 var app = express();
 
@@ -30,9 +30,9 @@ app.use(session({
 	secret: 'ddffgk1112'
 }));
 
+/*********  Esquemas, modelos y métodos *******************/
 
 var Schema = mongoose.Schema;
-
 
 var userSchema = new Schema({
 	nick: {type: String, required: true, unique: true},
@@ -49,24 +49,27 @@ var messageSchema = new Schema({
 });
 var Message = mongoose.model('Message',messageSchema);
 
-
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost/nodechat');
+/********************************************************/
 
 
 //var EmisorEventos = eventos.EventEmitter;
 //var ee = new EmisorEventos();
 
-app.chat = "welcome!\n";
-app.set('view engine', 'ejs');
-app.set('views',__dirname + '/views');
+
+app.chat = "welcome!\n";				// estado del chat actual
+app.set('view engine', 'ejs');			// engine de templates ejs
+app.set('views',__dirname + '/views');	// ubicación de las vistas / templates
 
 
 // handlers
 
 app.get('/', function(req,res){
-	express.static(__dirname +'/public');
-	req.session_state.reset();
+	express.static(__dirname +'/public');	// rutas estáticas 
+	req.session_state.reset();				
 });
+
+
 
 app.post('/login', function(req, res){
 	console.log('login...');
@@ -88,6 +91,9 @@ app.post('/login', function(req, res){
 	});
 	//}
 });
+
+
+
 
 app.get('/webchat', function(req,res){
 	console.log('webchat - '+ req.session_state.nick);
@@ -118,6 +124,9 @@ app.post('/webchat', function(req,res){
 		io.sockets.emit('newMsg',app.chat);
 });
 
+
+
+
 app.get('/showmessages',function(req,res){
 	Message.find({},function(err,messages){
 		if (err) throw err;
@@ -125,6 +134,10 @@ app.get('/showmessages',function(req,res){
 		res.render('messages',{'messages':messages});
 	});
 });
+
+
+
+
 
 app.get('/showusers', function(req,res){
 	var userlist = User.find({}, function(err,users){
@@ -134,6 +147,10 @@ app.get('/showusers', function(req,res){
 	});
 	
 });
+
+
+
+
 
 app.post('/newuser', function(req,res){
 	console.log("register> " + req.body.nick + ' ' + req.body.pass);
