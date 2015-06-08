@@ -1,0 +1,7 @@
+<h1>Users </h1>
+<p> total: <%= userlist.length %> </p>
+<ul>
+	<% for(var i=0; i<userlist.length; i++) { %>
+	<li><%=userlist[i]['nick']%></li>
+	<% } %>
+</ul>

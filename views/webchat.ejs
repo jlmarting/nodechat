@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+
+<script src="/socket.io.js"></script>
+</head>
+<body>
+<p> Nick: <%= nick %></p>
+<form name="webchat" action="/webchat" method="POST">
+<textarea name="chat" cols="30" rows="10"><%= chat %></textarea>
+<input name="message" type="text" value="">
+<input type="submit">
+<a href="http://localhost:4444/">logout</a>
+
+</form>
+
+
+<script>
+	var socket = io.connect('localhost:4444');
+
+	socket.on('newMsg',function(data){
+
+		console.log('newMsg recieved ' + JSON.stringify(data));
+		document.getElementsByName("chat")[0].innerHTML = data;
+
+	});
+
+
+</script>
+</body>
+</html>
